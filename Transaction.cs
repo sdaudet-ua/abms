@@ -1,3 +1,5 @@
+using System;
+
 namespace pa5_sdaudet_ua
 {
     public class Transaction
@@ -13,13 +15,23 @@ namespace pa5_sdaudet_ua
 
         public Transaction(string inISBN, string customerName, string customerEmail, int rentalLength)
         {
+            ID = transactionCount+1;
             ISBN = inISBN;
             custName = customerName;
             custEmail = customerEmail;
             rentalDate = DateTime.Now.ToString("yyyyMMdd");
             returnDate = DateTime.Now.AddDays(rentalLength).ToString("yyyyMMdd");
             status = "Out";
-            transactionCount++;
+        }
+        public Transaction(int inID, string inISBN, string customerName, string customerEmail, string inRentalDate, string inReturnDate, string inStatus)
+        {
+            ID = inID;
+            ISBN = inISBN;
+            custName = customerName;
+            custEmail = customerEmail;
+            rentalDate = inRentalDate;
+            returnDate = inReturnDate;
+            status = inStatus;
         }
         public string GetISBN()
         {
@@ -45,17 +57,25 @@ namespace pa5_sdaudet_ua
         {
             return returnDate;
         }
-        public int GetTransCount()
+        public string GetStatus()
         {
-            return transactionCount;
+            return status;
         }
         public void Return()
         {
-            status = "Returned";
+            status = $"Returned on {DateTime.Now.ToString("yyyyMMdd")}";
         }
-        public void IncTransCount()
+        public static int GetTransCount()
+        {
+            return transactionCount;
+        }
+        public static void IncTransCount()
         {
             transactionCount++;
+        }
+        public static void InitCount()
+        {
+            transactionCount = 0;
         }
     }
 }

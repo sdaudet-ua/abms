@@ -1,23 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\jslucas\\source\\repos\\fall-2020-starter-code\\fall-2020-starter-code.csproj": {}
+    "C:\\source\\repos\\pa5-sdaudet-ua\\fall-2020-starter-code.csproj": {}
   },
   "projects": {
-    "C:\\Users\\jslucas\\source\\repos\\fall-2020-starter-code\\fall-2020-starter-code.csproj": {
+    "C:\\source\\repos\\pa5-sdaudet-ua\\fall-2020-starter-code.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\jslucas\\source\\repos\\fall-2020-starter-code\\fall-2020-starter-code.csproj",
+        "projectUniqueName": "C:\\source\\repos\\pa5-sdaudet-ua\\fall-2020-starter-code.csproj",
         "projectName": "fall-2020-starter-code",
-        "projectPath": "C:\\Users\\jslucas\\source\\repos\\fall-2020-starter-code\\fall-2020-starter-code.csproj",
-        "packagesPath": "C:\\Users\\jslucas\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\jslucas\\source\\repos\\fall-2020-starter-code\\obj\\",
+        "projectPath": "C:\\source\\repos\\pa5-sdaudet-ua\\fall-2020-starter-code.csproj",
+        "packagesPath": "C:\\Users\\Spencer Audet\\.nuget\\packages\\",
+        "outputPath": "C:\\source\\repos\\pa5-sdaudet-ua\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\jslucas\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Spencer Audet\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -55,7 +52,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.401\\RuntimeIdentifierGraph.json"
         }
       }
     }

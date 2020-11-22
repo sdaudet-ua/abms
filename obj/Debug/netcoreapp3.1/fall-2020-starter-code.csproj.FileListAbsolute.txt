@@ -1,0 +1,13 @@
+C:\source\repos\pa5-sdaudet-ua\obj\Debug\netcoreapp3.1\fall-2020-starter-code.csprojAssemblyReference.cache
+C:\source\repos\pa5-sdaudet-ua\obj\Debug\netcoreapp3.1\fall-2020-starter-code.AssemblyInfoInputs.cache
+C:\source\repos\pa5-sdaudet-ua\obj\Debug\netcoreapp3.1\fall-2020-starter-code.AssemblyInfo.cs
+C:\source\repos\pa5-sdaudet-ua\obj\Debug\netcoreapp3.1\fall-2020-starter-code.csproj.CoreCompileInputs.cache
+C:\source\repos\pa5-sdaudet-ua\bin\Debug\netcoreapp3.1\fall-2020-starter-code.exe
+C:\source\repos\pa5-sdaudet-ua\bin\Debug\netcoreapp3.1\fall-2020-starter-code.deps.json
+C:\source\repos\pa5-sdaudet-ua\bin\Debug\netcoreapp3.1\fall-2020-starter-code.runtimeconfig.json
+C:\source\repos\pa5-sdaudet-ua\bin\Debug\netcoreapp3.1\fall-2020-starter-code.runtimeconfig.dev.json
+C:\source\repos\pa5-sdaudet-ua\bin\Debug\netcoreapp3.1\fall-2020-starter-code.dll
+C:\source\repos\pa5-sdaudet-ua\bin\Debug\netcoreapp3.1\fall-2020-starter-code.pdb
+C:\source\repos\pa5-sdaudet-ua\obj\Debug\netcoreapp3.1\fall-2020-starter-code.dll
+C:\source\repos\pa5-sdaudet-ua\obj\Debug\netcoreapp3.1\fall-2020-starter-code.pdb
+C:\source\repos\pa5-sdaudet-ua\obj\Debug\netcoreapp3.1\fall-2020-starter-code.genruntimeconfig.cache

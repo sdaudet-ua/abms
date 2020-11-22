@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+
 namespace pa5_sdaudet_ua
 {
     public class TransactionFile
@@ -16,23 +19,21 @@ namespace pa5_sdaudet_ua
             string dataRow = inFile.ReadLine();
             while(dataRow != null)
             {
-                string[] tempArray = input.Split('#');
+                string[] tempArray = dataRow.Split('#');
                 int rowID = int.Parse(tempArray[0]);
-                int rowTotalStock = int.Parse(tempArray[5]);
-                int rowCurrentStock = int.Parse(tempArray[6]);
-                transArray[Transaction.GetTransCount()] = new Transaction(rowID, tempArray[1], tempArray[2], tempArray[3], tempArray[4], tempArray[5]);
+                transArray[Transaction.GetTransCount()] = new Transaction(rowID, tempArray[1], tempArray[2], tempArray[3], tempArray[4], tempArray[5], tempArray[6]);
                 Transaction.IncTransCount();
                 dataRow = inFile.ReadLine(); 
             }
             inFile.Close();
-            return catalogArray;
+            return transArray;
         }
-        public void SaveBooksToFile()
+        public void SaveToFile(Transaction[] transArray)
         {
             StreamWriter outFile = new StreamWriter(file);
-            for (int i =0; i < Books.GetCount();i++)
+            for (int i =0; i < Transaction.GetTransCount();i++)
             {
-                outFile.WriteLine($"{ISBN}#{title}#{author}#{genre}#{listenTime}#{totalStock}#{currentStock}"); 
+                outFile.WriteLine($"{transArray[i].GetID()}#{transArray[i].GetISBN()}#{transArray[i].GetCustName()}#{transArray[i].GetCustEmail()}#{transArray[i].GetRentalDate()}#{transArray[i].GetReturnDate()}#{transArray[i].GetStatus()}");
             }
             outFile.Close();
         }

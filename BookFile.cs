@@ -1,38 +1,42 @@
+using System;
+using System.IO;
+
 namespace pa5_sdaudet_ua
 {
     public class BookFile
     {
-        private string file;
+        private static string file;
 
         public BookFile(string inFile){
-            this.file = inFile;
+            file = inFile;
         }
 
         public Books[] GetBooksFromFile()
         {
-            Books[] catalogArray = new Books[100];
+            Books[] classBookArray = new Books[200];
             StreamReader inFile = new StreamReader(file);
 
             string dataRow = inFile.ReadLine();
             while(dataRow != null)
             {
-                string[] tempArray = input.Split('#');
+                string[] tempArray = dataRow.Split('#');
                 int rowListenTime = int.Parse(tempArray[4]);
                 int rowTotalStock = int.Parse(tempArray[5]);
                 int rowCurrentStock = int.Parse(tempArray[6]);
-                catalogArray[Books.GetCount()] = new Books(tempArray[0], tempArray[1], tempArray[2], tempArray[3], rowListenTime, rowTotalStock, rowCurrentStock);
+                classBookArray[Books.GetCount()] = new Books(tempArray[0], tempArray[1], tempArray[2], tempArray[3], rowListenTime, rowTotalStock, rowCurrentStock);
+                //Console.WriteLine(tempArray[0]+tempArray[1]+tempArray[2]+tempArray[3]+rowListenTime+rowTotalStock+rowCurrentStock);
                 Books.IncCount();
                 dataRow = inFile.ReadLine(); 
             }
             inFile.Close();
-            return catalogArray;
+            return classBookArray;
         }
-        public void SaveBooksToFile()
+        public void SaveBooksToFile(Books[] catalogArray)
         {
             StreamWriter outFile = new StreamWriter(file);
             for (int i =0; i < Books.GetCount();i++)
             {
-                outFile.WriteLine($"{ISBN}#{title}#{author}#{genre}#{listenTime}#{totalStock}#{currentStock}"); 
+                outFile.WriteLine($"{catalogArray[i].GetISBN()}#{catalogArray[i].GetTitle()}#{catalogArray[i].GetAuthor()}#{catalogArray[i].GetGenre()}#{catalogArray[i].GetListenTime()}#{catalogArray[i].GetTotalStock()}#{catalogArray[i].GetCurrentStock()}"); 
             }
             outFile.Close();
         }

@@ -1,3 +1,6 @@
+using System;
+
+
 namespace pa5_sdaudet_ua
 {
     public class Books
@@ -18,7 +21,23 @@ namespace pa5_sdaudet_ua
             author = inAuthor;
             genre = inGenre;
             listenTime = inListenTime;
-            titleCount++;
+            totalStock = 1;
+            currentStock = 1;
+            //Console.WriteLine("Constructor Complete");
+        }
+        public Books(string inISBN, string inTitle, string inAuthor, string inGenre, int inListenTime, int inTotalStock, int inCurrentStock)
+        {
+            ISBN = inISBN;
+            title = inTitle;
+            author = inAuthor;
+            genre = inGenre;
+            listenTime = inListenTime;
+            totalStock = inTotalStock;
+            currentStock = inCurrentStock;
+        }
+        public Books()
+        {
+
         }
         public string GetISBN()
         {
@@ -44,9 +63,14 @@ namespace pa5_sdaudet_ua
         {
             return totalStock;
         }
-        public int GetCurrStock()
+        public int GetCurrentStock()
         {
             return currentStock;
+        }
+        public void SetISBN(string inISBN)
+        {
+            ISBN = inISBN;
+            Console.WriteLine($"Book ISBN changed to {ISBN}.");
         }
         public void SetTitle(string inTitle)
         {
@@ -73,18 +97,34 @@ namespace pa5_sdaudet_ua
             totalStock = desiredQuantity;
             Console.WriteLine($"Book total stock changed to {totalStock}");
         }
+        public void IncTotalStock()
+        {
+            totalStock++;
+        }
         public void SetCurrentStock(int desiredQuantity)
         {
             currentStock = desiredQuantity;
             Console.WriteLine($"Book current stock changed to {currentStock}");
         }
-        public void IncCount()
+        public void IncCurrentStock()
+        {
+            currentStock++;
+        }
+        public void DecCurrentStock()
+        {
+            currentStock--;
+        }
+        public static void IncCount()
         {
             titleCount++;
         }
-        public int GetCount()
+        public static int GetCount()
         {
             return titleCount;
+        }
+        public static void InitCount()
+        {
+            titleCount = 0;
         }
     }
 }
