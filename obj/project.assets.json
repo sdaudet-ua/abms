@@ -8,26 +8,24 @@
     ".NETCoreApp,Version=v3.1": []
   },
   "packageFolders": {
-    "C:\\Users\\Spencer Audet\\.nuget\\packages\\": {}
+    "/Users/saudet/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\source\\repos\\pa5-sdaudet-ua\\fall-2020-starter-code.csproj",
+      "projectUniqueName": "/Users/saudet/Documents/MIS221/repos/pa5-sdaudet-ua/fall-2020-starter-code.csproj",
       "projectName": "fall-2020-starter-code",
-      "projectPath": "C:\\source\\repos\\pa5-sdaudet-ua\\fall-2020-starter-code.csproj",
-      "packagesPath": "C:\\Users\\Spencer Audet\\.nuget\\packages\\",
-      "outputPath": "C:\\source\\repos\\pa5-sdaudet-ua\\obj\\",
+      "projectPath": "/Users/saudet/Documents/MIS221/repos/pa5-sdaudet-ua/fall-2020-starter-code.csproj",
+      "packagesPath": "/Users/saudet/.nuget/packages/",
+      "outputPath": "/Users/saudet/Documents/MIS221/repos/pa5-sdaudet-ua/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Spencer Audet\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/saudet/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -58,7 +56,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.401\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/3.1.401/RuntimeIdentifierGraph.json"
       }
     }
   }

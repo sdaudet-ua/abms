@@ -1,8 +1,8 @@
 {
   "runtimeOptions": {
     "additionalProbingPaths": [
-      "C:\\Users\\Spencer Audet\\.dotnet\\store\\|arch|\\|tfm|",
-      "C:\\Users\\Spencer Audet\\.nuget\\packages"
+      "/Users/saudet/.dotnet/store/|arch|/|tfm|",
+      "/Users/saudet/.nuget/packages"
     ]
   }
 }

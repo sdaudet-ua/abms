@@ -23,40 +23,41 @@ namespace pa5_sdaudet_ua
                     case 1:
                     Console.Clear();
                     AddBook(catalogArray);
+                    workingFile.SaveBooksToFile(catalogArray);
                     break;
 
                     case 2:
                     Console.Clear();
                     EditBook(catalogArray);
+                    workingFile.SaveBooksToFile(catalogArray);
                     break;
 
                     case 3:
                     Console.Clear();
                     RentBook(catalogArray, transArray);
+                    transLog.SaveToFile(transArray);
+                    workingFile.SaveBooksToFile(catalogArray);
                     break;
 
                     case 4:
                     Console.Clear();
                     ReturnBook(catalogArray, transArray);
+                    transLog.SaveToFile(transArray);
+                    workingFile.SaveBooksToFile(catalogArray);
                     break;
 
                     case 5:
-                    workingFile.SaveBooksToFile(catalogArray);
-                    transLog.SaveToFile(transArray);
-                    break;
-
-                    case 6:
                     Console.Clear();
                     exit=1;
                     break;
 
-                    case 7:
+                    case 6:
                     PrintCatalog(catalogArray);
                     Console.WriteLine();
                     PrintTransactions(transArray);
                     break;
 
-                    case 8:
+                    case 7:
                     Console.WriteLine($"BookCount: {Books.GetCount()}");
                     Console.WriteLine($"TransCount: {Transaction.GetTransCount()}");
                     Console.ReadKey();
@@ -376,9 +377,10 @@ namespace pa5_sdaudet_ua
         }
         public static void PrintCatalog(Books[] catalogArray)
         {
+            Console.WriteLine($"ISBN\tTitle\tAuthor\tGenre\tListen Time\tTotal / Current Stock\t");
             for (int i =0; i < Books.GetCount();i++)
             {
-                Console.WriteLine(catalogArray[i].GetISBN() + catalogArray[i].GetTitle() + catalogArray[i].GetAuthor());
+                Console.WriteLine($"{catalogArray[i].GetISBN()}\t{catalogArray[i].GetTitle()}\t{catalogArray[i].GetAuthor()}\t{catalogArray[i].GetGenre()}\t{catalogArray[i].GetListenTime()}\t{catalogArray[i].GetTotalStock()}/{catalogArray[i].GetCurrentStock()}");
             }
             Console.ReadKey();
             
