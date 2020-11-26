@@ -309,8 +309,16 @@ namespace pa5_sdaudet_ua
             Console.WriteLine("Rented Title Information:\n\n");
             Console.WriteLine($"ISBN: {catalogArray[index].GetISBN()}");
             Console.WriteLine($"Title: {catalogArray[index].GetTitle()}");
-            Console.WriteLine($"Author: {catalogArray[index].GetAuthor()}")
-
+            Console.WriteLine($"Author: {catalogArray[index].GetAuthor()}");
+            Console.WriteLine($"Genre: {catalogArray[index].GetGenre()}");
+            Console.WriteLine($"Listen Time: {catalogArray[index].GetListenTime()}\n");
+            Console.WriteLine("Would you like to return this rental? (Y for yes, Enter for no.)");
+            string input = Console.ReadLine();
+            if (input.ToUpper() == "Y")
+            {
+                catalogArray[index].IncCurrentStock();
+                transArray[transaction].Return();
+            }
         }
         
         static int SearchBooks(Books[] catalogArray,string SearchedISBN)
