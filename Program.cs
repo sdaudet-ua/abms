@@ -62,6 +62,14 @@ namespace pa5_sdaudet_ua
                     Console.WriteLine($"TransCount: {Transaction.GetTransCount()}");
                     Console.ReadKey();
                     break;
+
+                    case 8:
+                    Reporting(catalogArray, transArray, 1);
+                    break;
+
+                    case 9:
+                    Reporting(catalogArray, transArray, 2);
+                    break;
                 }
             }
         }
@@ -244,7 +252,7 @@ namespace pa5_sdaudet_ua
                     break;
 
                     case "8":
-                    break;;
+                    break;
                 }
             }
             Console.ReadKey();
@@ -348,7 +356,7 @@ namespace pa5_sdaudet_ua
             int arrayCount = -1;
             bool itemFound = false;
             bool emailFound = false;
-            for (int i = 0; i <= Transaction.GetTransCount();i++)
+            for (int i = 0; i < Transaction.GetTransCount();i++)
             {
                 if (transArray[i].GetStatus() == "Out")
                 {
@@ -376,17 +384,64 @@ namespace pa5_sdaudet_ua
             }
             return arrayCount;
         }
-        public void Reporting(Books[] catalogArray, Transaction[] transArray, int reportType)
+        public static void Reporting(Books[] catalogArray, Transaction[] transArray, int reportType)
         {
             if (reportType == 1) //YearMonth Report
             {
-                for (int i = 0; i <= Transaction.GetTransCount();i++)
+                for (int year = 2000; year <= 2150; year++)
                 {
-                    if (transArray[i].GetRentalDate() == "Out")
+                    int yearCount = 0;
+                    int[] monthArray = {0,0,0,0,0,0,0,0,0,0,0,0,0};
+                    string[] monthsOfYear = {"Not a Month", "January","February","March","April","May","June","July","August","September","October","November","December"};
+                    for (int month = 1; month <= 12; month++)
                     {
-                        
+                        for (int i = 0; i < Transaction.GetTransCount();i++)
+                        {
+                            if (transArray[i].GetRentalDate().Substring(0,4) == year.ToString())
+                            {
+                                if (transArray[i].GetRentalDate().Substring(0,6) == year.ToString()+month.ToString("D" + 2))
+                                {
+                                    yearCount++;
+                                    monthArray[month]++;
+                                }
+                            }
+                            
+                        }
+                    }
+                    if (yearCount > 0)
+                    {
+                        Console.WriteLine($"{year} Total Rentals: {yearCount}");
+                        for (int month = 1; month <= 12; month++)
+                        {
+                            if (monthArray[month] > 0)
+                            {
+                                Console.WriteLine($"{monthsOfYear[month]} {year} Rentals: {monthArray[month]}");
+                            }
+                        }
+                    }
+                    
+                }
+                Console.WriteLine("\n\nPress Any Key to Continue");
+                Console.ReadKey();
+                
+            }
+            else if (reportType == 2)
+            {
+                Console.Write("Please enter a customer email address: ");
+                string email = Console.ReadLine();
+                Console.WriteLine($"Showing all transactions for '{email}'.\n");
+                for (int i = 0; i < Transaction.GetTransCount(); i++)
+                {
+                    if (transArray[i].GetCustEmail() == email)
+                    {
+                        string bookISBN = transArray[i].GetISBN();
+                        int index = SearchBooks(catalogArray, bookISBN);
+
+                        Console.WriteLine($"{catalogArray[index].GetTitle()}\t{transArray[i].GetISBN()}\t{transArray[i].GetCustName()}\t{transArray[i].GetCustEmail()}\tRental Date: {transArray[i].GetRentalDate()}\tStatus: {transArray[i].GetStatus()}");
                     }
                 }
+                Console.WriteLine("\n\nPress any key to continue.");
+                Console.ReadKey();
             }
         }
         public static void PrintCatalog(Books[] catalogArray)

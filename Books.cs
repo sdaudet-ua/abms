@@ -126,5 +126,64 @@ namespace pa5_sdaudet_ua
         {
             titleCount = 0;
         }
+        public void EditBook()
+        {
+            Console.WriteLine($"ISBN: {ISBN}\nTitle: {title}\nAuthor: {author}\n Genre: {genre}\nListen time: {listenTime}\nTotal Stock: {totalStock}\nCurrent Stock: {currentStock}");
+            Console.WriteLine("What value would you like to change?\n");
+            Console.WriteLine("1:   ISBN");
+            Console.WriteLine("2:   Title");
+            Console.WriteLine("3:   Author");
+            Console.WriteLine("4:   Genre");
+            Console.WriteLine("5:   Listen Time");
+            Console.WriteLine("6:   Total Stock");
+            Console.WriteLine("7:   Current Stock");
+            Console.WriteLine("8:   NO CHANGE");
+            string input = Console.ReadLine();
+            switch(input)
+            {
+                case "1":
+                Console.Write("Please enter the new value: ");
+                ISBN = Console.ReadLine();
+                break;
+                
+                case "2":
+                Console.Write("Please enter the new value: ");
+                title = Console.ReadLine();
+                break;
+
+                case "3":
+                Console.Write("Please enter the new value: ");
+                author = Console.ReadLine();
+                break;
+
+                case "4":
+                Console.Write("Please enter the new value: ");
+                genre = Program.SelectGenre();
+                break;
+
+                case "5":
+                Console.Write("Please enter the new value (Must be numerical): ");
+                listenTime = int.Parse(Console.ReadLine());
+                break;
+
+                case "6":
+                Console.Write("Please enter the new value (Must be numerical): ");
+                totalStock = int.Parse(Console.ReadLine());
+                break;
+
+                case "7":
+                Console.Write("Please enter the new value (Must be numerical): ");
+                currentStock = int.Parse(Console.ReadLine());
+                if (currentStock > totalStock)
+                {
+                    totalStock = currentStock;
+                    Console.WriteLine($"Value was larger than total stock, so total Stock and current stock are now: {totalStock}");
+                }
+                break;
+
+                case "8":
+                break;
+                }
+        }
     }
 }
