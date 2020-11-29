@@ -342,7 +342,8 @@ namespace pa5_sdaudet_ua
                 arrayCount = -1;
             }
             return arrayCount;
-        }static int SearchTransactions(Transaction[] transArray,string SearchedISBN, string custEmail)
+        }
+        static int SearchTransactions(Transaction[] transArray,string SearchedISBN, string custEmail)
         {
             int arrayCount = -1;
             bool itemFound = false;
@@ -374,6 +375,19 @@ namespace pa5_sdaudet_ua
                 Console.WriteLine("An error occurred in the SearchTransaction method inside the Program class.");
             }
             return arrayCount;
+        }
+        public void Reporting(Books[] catalogArray, Transaction[] transArray, int reportType)
+        {
+            if (reportType == 1) //YearMonth Report
+            {
+                for (int i = 0; i <= Transaction.GetTransCount();i++)
+                {
+                    if (transArray[i].GetRentalDate() == "Out")
+                    {
+                        
+                    }
+                }
+            }
         }
         public static void PrintCatalog(Books[] catalogArray)
         {
