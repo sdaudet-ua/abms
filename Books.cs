@@ -95,7 +95,15 @@ namespace pa5_sdaudet_ua
         public void SetTotalStock(int desiredQuantity)
         {
             totalStock = desiredQuantity;
-            Console.WriteLine($"Book total stock changed to {totalStock}");
+            if (totalStock < currentStock)
+            {
+                currentStock = totalStock;
+                Console.WriteLine($"Entered total stock value was less than the current stock value. Both values are now {totalStock}");
+            }
+            else
+            {
+                Console.WriteLine($"Book total stock changed to {totalStock}");
+            }
         }
         public void IncTotalStock()
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace pa5_sdaudet_ua
 {
@@ -16,9 +17,24 @@ namespace pa5_sdaudet_ua
             int exit = 0;
             while (exit == 0)
             {
-                int userChoice = ChooseProgram();
+                bool valid = false;
+                string userChoice = null;
+                while (!valid)
+                {
+                    ChooseProgram();
+                    Console.Write("\n\nChoice: ");
+                    userChoice = Console.ReadLine();
+                    int number;
+                    if (userChoice == null){}
+                    else if (int.TryParse(userChoice, out number))
+                    {
+                        valid = true;
+                    }
+                    else {}
+                }
+
                 //This is the selection block for the main menu.  
-                switch(userChoice)
+                switch(int.Parse(userChoice))
                 {
                     case 1:
                     Console.Clear();
@@ -41,49 +57,70 @@ namespace pa5_sdaudet_ua
 
                     case 4:
                     Console.Clear();
+                    PrintAvailableBooks(catalogArray);
+                    break;
+
+                    case 5:
+                    Console.Clear();
                     ReturnBook(catalogArray, transArray);
                     transLog.SaveToFile(transArray);
                     workingFile.SaveBooksToFile(catalogArray);
                     break;
 
-                    case 5:
+                    case 16:
                     Console.Clear();
-                    exit=1;
-                    break;
-
-                    case 6:
                     PrintCatalog(catalogArray);
                     Console.WriteLine();
                     PrintTransactions(transArray);
                     break;
 
-                    case 7:
+                    case 6:
+                    Console.Clear();
                     Console.WriteLine($"BookCount: {Books.GetCount()}");
                     Console.WriteLine($"TransCount: {Transaction.GetTransCount()}");
                     Console.ReadKey();
                     break;
 
-                    case 8:
+                    case 7:
+                    Console.Clear();
                     Reporting(catalogArray, transArray, 1);
                     break;
 
-                    case 9:
+                    case 8:
+                    Console.Clear();
                     Reporting(catalogArray, transArray, 2);
+                    break;
+                    
+                    case 9:
+                    Console.Clear();
+                    Reporting(catalogArray, transArray, 3);
+                    break;
+
+                    case 0:
+                    Console.Clear();
+                    exit=1;
+                    break;
+
+                    default:
                     break;
                 }
             }
         }
-        static int ChooseProgram()
+        static void ChooseProgram()
         {
             //This method displays the main menu and returns the chosen value to the main method for selection.
             Console.Clear();
+            DisplayLogo();
             Console.Write("\n");
             Console.WriteLine("1:   Add a book.");
             Console.WriteLine("2:   Edit a book.");
             Console.WriteLine("3:   Rent a book.");
             Console.WriteLine("4:   Return a book.");
-            Console.WriteLine("5:   Exit\n\n");
-            return int.Parse(Console.ReadLine());
+            Console.WriteLine("5:   Exit");
+            Console.WriteLine("6:   Show book and transaction counts.");
+            Console.WriteLine("7:   Show rentals by month/year.");
+            Console.WriteLine("8:   Show rentals by customer email.");
+            Console.WriteLine("9:   Show all rentals sorted by customer.");
         }
         static void AddBook(Books[] catalogArray)
         {
@@ -131,7 +168,7 @@ namespace pa5_sdaudet_ua
                 Console.WriteLine("Book added to inventory, press any key to continue.");
             }
         }
-        static string SelectGenre()
+        public static string SelectGenre()
         {
             bool valid = false;
             Console.WriteLine("1:   Romance");
@@ -194,68 +231,14 @@ namespace pa5_sdaudet_ua
                 if (choice.ToUpper() == "Y")
                 {
                     AddBook(catalogArray, ISBN);
-                    
+                    Console.WriteLine("Book added, press Enter to return to the main menu.");
+                    Console.ReadKey();
                 }
             }
             else
             {
-                Console.WriteLine($"ISBN: {catalogArray[index].GetISBN()}\nTitle: {catalogArray[index].GetTitle()}\nAuthor: {catalogArray[index].GetAuthor()}\n Genre: {catalogArray[index].GetGenre()}\nListen time: {catalogArray[index].GetListenTime()}\nTotal Stock: {catalogArray[index].GetTotalStock()}\nCurrent Stock: {catalogArray[index].GetCurrentStock()}");
-                Console.WriteLine("What value would you like to change?\n");
-                Console.WriteLine("1:   ISBN");
-                Console.WriteLine("2:   Title");
-                Console.WriteLine("3:   Author");
-                Console.WriteLine("4:   Genre");
-                Console.WriteLine("5:   Listen Time");
-                Console.WriteLine("6:   Total Stock");
-                Console.WriteLine("7:   Current Stock");
-                Console.WriteLine("8:   NO CHANGE");
-                string input = Console.ReadLine();
-                switch(input)
-                {
-                    case "1":
-                    Console.Write("Please enter the new value: ");
-                    catalogArray[index].SetISBN(Console.ReadLine());
-                    break;
-                    
-                    case "2":
-                    Console.Write("Please enter the new value: ");
-                    catalogArray[index].SetTitle(Console.ReadLine());
-                    break;
-
-                    case "3":
-                    Console.Write("Please enter the new value: ");
-                    catalogArray[index].SetAuthor(Console.ReadLine());
-                    break;
-
-                    case "4":
-                    Console.Write("Please enter the new value: ");
-                    catalogArray[index].SetGenre(SelectGenre());
-                    break;
-
-                    case "5":
-                    Console.Write("Please enter the new value (Must be numerical): ");
-                    catalogArray[index].SetListenTime(int.Parse(Console.ReadLine()));
-                    break;
-
-                    case "6":
-                    Console.Write("Please enter the new value (Must be numerical): ");
-                    catalogArray[index].SetTotalStock(int.Parse(Console.ReadLine()));
-                    break;
-
-                    case "7":
-                    Console.Write("Please enter the new value (Must be numerical): ");
-                    catalogArray[index].SetCurrentStock(int.Parse(Console.ReadLine()));
-                    if (catalogArray[index].GetCurrentStock() > catalogArray[index].GetTotalStock())
-                    {
-                        catalogArray[index].SetTotalStock(catalogArray[index].GetCurrentStock());
-                    }
-                    break;
-
-                    case "8":
-                    break;
-                }
+                catalogArray[index].EditBook();
             }
-            Console.ReadKey();
         }
         static void RentBook(Books[] catalogArray, Transaction[] transArray)
         {
@@ -278,14 +261,29 @@ namespace pa5_sdaudet_ua
                 else
                 {
                     Transaction.IncTransCount();
-                    Console.Write("Please enter customer name (Last, First): ");
-                    string custName = Console.ReadLine();
                     Console.Write("Please enter customer email address: ");
                     string custEmail = Console.ReadLine();
-                    Console.WriteLine("How long will this book be rented for (in days): ");
-                    int rentalLength = int.Parse(Console.ReadLine());
-                    transArray[Transaction.GetTransCount()-1] = new Transaction(ISBN,custName,custEmail,rentalLength);
-                    catalogArray[index].DecCurrentStock();
+                    int customerFirstTransaction = SearchCustomer(transArray, custEmail);
+                    if (customerFirstTransaction !=-1)
+                    {
+                        string custName = transArray[customerFirstTransaction].GetCustName();
+                        Console.WriteLine($"Existing Customer: {custName}");
+                        int custID = transArray[customerFirstTransaction].custID;
+                        Console.WriteLine("How long will this book be rented for (in days): ");
+                        int rentalLength = int.Parse(Console.ReadLine());
+                        transArray[Transaction.GetTransCount()-1] = new Transaction(ISBN,custName,custEmail,custID,rentalLength);
+                        catalogArray[index].DecCurrentStock();
+                    }
+                    else
+                    {
+                        Console.Write("Please enter customer name (Last, First): ");
+                        string custName = Console.ReadLine();
+                        Console.WriteLine("How long will this book be rented for (in days): ");
+                        int rentalLength = int.Parse(Console.ReadLine());
+                        int custID = GetCustID(transArray,custEmail,custName);
+                        transArray[Transaction.GetTransCount()-1] = new Transaction(ISBN,custName,custEmail,custID,rentalLength);
+                        catalogArray[index].DecCurrentStock();
+                    }
                 }
                 Console.WriteLine("Rent another book? (Y for yes, any other key for no)");
                 switch(Console.ReadLine().ToUpper())
@@ -301,32 +299,90 @@ namespace pa5_sdaudet_ua
             }
             
         }
+        static void PrintAvailableBooks(Books[] catalogArray)
+        {
+            for (int i = 0; i < Books.GetCount();i++)
+            {
+                if (catalogArray[i].GetCurrentStock() > 0)
+                {
+                    Console.WriteLine($"ISBN: {catalogArray[i].GetISBN()}\nTitle: {catalogArray[i].GetTitle()}\nAuthor: {catalogArray[i].GetAuthor()}\nGenre: {catalogArray[i].GetGenre()}\nListen Time: {catalogArray[i].GetListenTime()}\n\n\n");
+                }
+            }
+        }
         static void ReturnBook(Books[] catalogArray, Transaction[] transArray)
         {
+            bool skipEntry = false;
             Console.WriteLine("**Rent a Book**\n\n\n");
             Console.Write("Please enter an ISBN: ");
             string ISBN = Console.ReadLine();
-            Console.Write("Please enter customer email address: ");
-            string email = Console.ReadLine();
             int index = SearchBooks(catalogArray, ISBN);
-            int transaction = SearchTransactions(transArray, ISBN, email);
-            Console.WriteLine($"Transaction Information: \n\n");
-            Console.WriteLine($"Customer Name: {transArray[transaction].GetCustName()}");
-            Console.WriteLine($"Customer Email: {transArray[transaction].GetCustEmail()}");
-            Console.WriteLine($"Rented On: {transArray[transaction].GetRentalDate()}");
-            Console.WriteLine($"Return Date: {transArray[transaction].GetReturnDate()}\n");
-            Console.WriteLine("Rented Title Information:\n\n");
-            Console.WriteLine($"ISBN: {catalogArray[index].GetISBN()}");
-            Console.WriteLine($"Title: {catalogArray[index].GetTitle()}");
-            Console.WriteLine($"Author: {catalogArray[index].GetAuthor()}");
-            Console.WriteLine($"Genre: {catalogArray[index].GetGenre()}");
-            Console.WriteLine($"Listen Time: {catalogArray[index].GetListenTime()}\n");
-            Console.WriteLine("Would you like to return this rental? (Y for yes, Enter for no.)");
-            string input = Console.ReadLine();
-            if (input.ToUpper() == "Y")
+            if (index == -1)
             {
-                catalogArray[index].IncCurrentStock();
-                transArray[transaction].Return();
+                Console.WriteLine("This ISBN does not exist in the system. Press any key to return to the main menu.");
+                skipEntry = true;
+                Console.ReadKey();
+            }
+            if (catalogArray[index].GetTotalStock()-catalogArray[index].GetCurrentStock() == 1)
+            {
+                int transIndex =  SearchTransactions(transArray, ISBN);
+                Console.WriteLine($"Transaction Information: \n\n");
+                Console.WriteLine($"Customer Name: {transArray[transIndex].GetCustName()}");
+                Console.WriteLine($"Customer Email: {transArray[transIndex].GetCustEmail()}");
+                Console.WriteLine($"Rented On: {transArray[transIndex].GetRentalDate()}");
+                Console.WriteLine($"Return Date: {transArray[transIndex].GetReturnDate()}\n");
+                Console.WriteLine("Rented Title Information:\n\n");
+                Console.WriteLine($"ISBN: {catalogArray[index].GetISBN()}");
+                Console.WriteLine($"Title: {catalogArray[index].GetTitle()}");
+                Console.WriteLine($"Author: {catalogArray[index].GetAuthor()}");
+                Console.WriteLine($"Genre: {catalogArray[index].GetGenre()}");
+                Console.WriteLine($"Listen Time: {catalogArray[index].GetListenTime()}\n");
+                Console.WriteLine($"Is this the correct rental record? (Y for yes, Enter for no.)");
+                string errorCheckInput = Console.ReadLine();
+                if (errorCheckInput.ToUpper() == "Y")
+                {
+                    skipEntry = true;
+                    Console.WriteLine("Would you like to return this rental? (Y for yes, Enter to return to the main menu.)");
+                    string input = Console.ReadLine();
+                    if (input.ToUpper() == "Y")
+                    {
+                        catalogArray[index].IncCurrentStock();
+                        transArray[transIndex].Return();
+                        Console.WriteLine("Book returned. Press any key to return to the main menu.");
+
+                    }
+                }
+                
+            }
+            else if (catalogArray[index].GetTotalStock()-catalogArray[index].GetCurrentStock() == 0)
+            {
+                Console.WriteLine("There are no copies of this book rented out. Press any key to return to the main menu.");
+                skipEntry = true;
+                Console.ReadKey();
+            }
+            while (!skipEntry)
+            {
+                Console.Write("Please enter customer email address: ");
+                string email = Console.ReadLine();
+                int transaction = SearchTransactions(transArray, ISBN, email);
+                Console.WriteLine($"Transaction Information: \n\n");
+                Console.WriteLine($"Customer Name: {transArray[transaction].GetCustName()}");
+                Console.WriteLine($"Customer Email: {transArray[transaction].GetCustEmail()}");
+                Console.WriteLine($"Rented On: {transArray[transaction].GetRentalDate()}");
+                Console.WriteLine($"Return Date: {transArray[transaction].GetReturnDate()}\n");
+                Console.WriteLine("Rented Title Information:\n\n");
+                Console.WriteLine($"ISBN: {catalogArray[index].GetISBN()}");
+                Console.WriteLine($"Title: {catalogArray[index].GetTitle()}");
+                Console.WriteLine($"Author: {catalogArray[index].GetAuthor()}");
+                Console.WriteLine($"Genre: {catalogArray[index].GetGenre()}");
+                Console.WriteLine($"Listen Time: {catalogArray[index].GetListenTime()}\n");
+                Console.WriteLine("Would you like to return this rental? (Y for yes, Enter for no.)");
+                string input = Console.ReadLine();
+                if (input.ToUpper() == "Y")
+                {
+                    catalogArray[index].IncCurrentStock();
+                    transArray[transaction].Return();
+                }
+                skipEntry = true;
             }
         }
         
@@ -384,6 +440,36 @@ namespace pa5_sdaudet_ua
             }
             return arrayCount;
         }
+        static int SearchTransactions(Transaction[] transArray,string SearchedISBN)
+        {
+            int arrayCount = -1;
+            for (int i = 0; i < Transaction.GetTransCount();i++)
+            {
+                if (transArray[i].GetStatus() == "Out")
+                {
+                    if ((transArray[i].GetISBN() == SearchedISBN))
+                    {
+                        return i;
+                    }
+                }
+            }
+            return arrayCount;
+        }
+        static int SearchCustomer(Transaction[] transArray,string customerEmail)
+        {
+            int arrayCount = -1;
+            for (int i = 0; i < Transaction.GetTransCount();i++)
+            {
+                if (transArray[i].GetStatus() == "Out")
+                {
+                    if (transArray[i].GetCustEmail() == customerEmail)
+                    {
+                        return i;
+                    }
+                }
+            }
+            return arrayCount;
+        }
         public static void Reporting(Books[] catalogArray, Transaction[] transArray, int reportType)
         {
             if (reportType == 1) //YearMonth Report
@@ -421,15 +507,55 @@ namespace pa5_sdaudet_ua
                     }
                     
                 }
-                Console.WriteLine("\n\nPress Any Key to Continue");
-                Console.ReadKey();
+                Console.Write("\n\nWould you like to save this report to a file? (Y for yes, any other key for no.) ");
+                string printDesired = Console.ReadLine();
+                if (printDesired.ToUpper() == "Y")
+                {
+                    Console.Write("Please enter the name of the file you would like the report saved to (Do not include a file extension.): ");
+                    string fileName = Console.ReadLine()+".txt";
+                    StreamWriter outFile = new StreamWriter(fileName);
+                    for (int year = 2000; year <= 2150; year++)
+                    {
+                        int yearCount = 0;
+                        int[] monthArray = {0,0,0,0,0,0,0,0,0,0,0,0,0};
+                        string[] monthsOfYear = {"Not a Month", "January","February","March","April","May","June","July","August","September","October","November","December"};
+                        for (int month = 1; month <= 12; month++)
+                        {
+                            for (int i = 0; i < Transaction.GetTransCount();i++)
+                            {
+                                if (transArray[i].GetRentalDate().Substring(0,4) == year.ToString())
+                                {
+                                    if (transArray[i].GetRentalDate().Substring(0,6) == year.ToString()+month.ToString("D" + 2))
+                                    {
+                                        yearCount++;
+                                        monthArray[month]++;
+                                    }
+                                }
+                                
+                            }
+                        }
+                        if (yearCount > 0)
+                        {
+                            outFile.WriteLine($"{year} Total Rentals: {yearCount}");
+                            for (int month = 1; month <= 12; month++)
+                            {
+                                if (monthArray[month] > 0)
+                                {
+                                    outFile.WriteLine($"{monthsOfYear[month]} {year} Rentals: {monthArray[month]}");
+                                }
+                            }
+                        }
+                    }
+                    outFile.Close();
+                }
                 
             }
             else if (reportType == 2)
             {
                 Console.Write("Please enter a customer email address: ");
                 string email = Console.ReadLine();
-                Console.WriteLine($"Showing all transactions for '{email}'.\n");
+                int custTransaction = SearchCustomer(transArray, email);
+                Console.WriteLine($"Showing all transactions for {transArray[custTransaction].GetCustName()} ({email}).\n");
                 for (int i = 0; i < Transaction.GetTransCount(); i++)
                 {
                     if (transArray[i].GetCustEmail() == email)
@@ -437,12 +563,224 @@ namespace pa5_sdaudet_ua
                         string bookISBN = transArray[i].GetISBN();
                         int index = SearchBooks(catalogArray, bookISBN);
 
-                        Console.WriteLine($"{catalogArray[index].GetTitle()}\t{transArray[i].GetISBN()}\t{transArray[i].GetCustName()}\t{transArray[i].GetCustEmail()}\tRental Date: {transArray[i].GetRentalDate()}\tStatus: {transArray[i].GetStatus()}");
+                        Console.WriteLine($"{transArray[i].GetISBN()}\tRental Date: {transArray[i].GetRentalDate()}\tStatus: {transArray[i].GetStatus()}");
                     }
                 }
-                Console.WriteLine("\n\nPress any key to continue.");
-                Console.ReadKey();
+                Console.Write("\n\nWould you like to save this report to a file? (Y for yes, any other key for no.) ");
+                string printDesired = Console.ReadLine();
+                if (printDesired.ToUpper() == "Y")
+                {
+                    Console.Write("Please enter the name of the file you would like the report saved to (Do not include a file extension.): ");
+                    string fileName = Console.ReadLine()+".txt";
+                    StreamWriter outFile = new StreamWriter(fileName);
+                    outFile.WriteLine($"Showing all transactions for {transArray[custTransaction].GetCustName()} ({email}).\n");
+                    for (int i = 0; i < Transaction.GetTransCount(); i++)
+                    {
+                        if (transArray[i].GetCustEmail() == email)
+                        {
+                            string bookISBN = transArray[i].GetISBN();
+                            int index = SearchBooks(catalogArray, bookISBN);
+
+                            outFile.WriteLine($"{transArray[i].GetISBN()}\tRental Date: {transArray[i].GetRentalDate()}\tStatus: {transArray[i].GetStatus()}");
+                        }
+                    }
+                    outFile.Close();
+                }
             }
+            else if (reportType == 3)
+            {
+                for (int customer = 0; customer < Transaction.highestCustID; customer++)
+                {
+                    int customerTotal = 0;
+                    string customerName = null;
+                    bool customerFound = false;
+                    for (int i = 0; i < Transaction.GetTransCount();i++)
+                    {
+                        if (transArray[i].custID == customer)
+                        {
+                            customerFound = true;
+                            customerName = transArray[i].GetCustName();
+                            break;
+                        }
+                    }
+                    if (customerFound)
+                    {
+                        Console.WriteLine($"{customerName}");
+                    }
+                    for (int i = 0; i < Transaction.GetTransCount();i++)
+                    {
+                        if (transArray[i].custID == customer)
+                        {
+                            customerTotal++;
+                            Console.WriteLine($"{transArray[i].GetISBN()}\tRental Date: {transArray[i].GetRentalDate()}\tStatus: {transArray[i].GetStatus()}");
+                        }
+                    }
+                    if (customerTotal > 0)
+                    {
+                        Console.WriteLine($"{customerName} has ordered {customerTotal} books total.\n\n");
+                    }
+                }
+                Console.Write("Would you like to save this report to a file? (Y for yes, any other key for no.) ");
+                string printDesired = Console.ReadLine();
+                if (printDesired.ToUpper() == "Y")
+                {
+                    Console.Write("Please enter the name of the file you would like the report saved to (Do not include a file extension.): ");
+                    string fileName = Console.ReadLine()+".txt";
+                    StreamWriter outFile = new StreamWriter(fileName);
+                    for (int customer = 0; customer < 9999; customer++)
+                    {
+                        int customerTotal = 0;
+                        string customerName = null;
+                        bool customerFound = false;
+                        for (int i = 0; i < Transaction.GetTransCount();i++)
+                        {
+                            if (transArray[i].custID == customer)
+                            {
+                                customerFound = true;
+                                customerName = transArray[i].GetCustName();
+                                break;
+                            }
+                        }
+                        if (customerFound)
+                        {
+                            outFile.WriteLine($"{customerName}");
+                        }
+                        for (int i = 0; i < Transaction.GetTransCount();i++)
+                        {
+                            if (transArray[i].custID == customer)
+                            {
+                                customerTotal++;
+                                outFile.WriteLine($"{transArray[i].GetISBN()}\tRental Date: {transArray[i].GetRentalDate()}\tStatus: {transArray[i].GetStatus()}");
+                            }
+                        }
+                        if (customerTotal > 0)
+                        {
+                            outFile.WriteLine($"{customerName} has ordered {customerTotal} books total.\n\n");
+                        }
+                    }
+                    outFile.Close();
+                }
+            }
+        }
+        private static int GetCustID(Transaction[] transArray,string custEmail, string custName)
+        {
+            string alphIndex = null;
+            for (int i = 0; i < Transaction.GetTransCount()-1;i++)
+            {
+                if (transArray[i].GetCustEmail() == custEmail)
+                {
+                    return transArray[i].custID;
+                }
+            }
+            switch (custName.Substring(0,1).ToUpper())
+            {
+                case "A":
+                alphIndex = "1";
+                break;
+
+                case "B":
+                alphIndex = "2";
+                break;
+
+                case "C":
+                alphIndex = "3";
+                break;
+
+                case "D":
+                alphIndex = "4";
+                break;
+
+                case "E":
+                alphIndex = "5";
+                break;
+
+                case "F":
+                alphIndex = "6";
+                break;
+
+                case "G":
+                alphIndex = "7";
+                break;
+
+                case "H":
+                alphIndex = "8";
+                break;
+
+                case "I":
+                alphIndex = "9";
+                break;
+
+                case "J":
+                alphIndex = "10";
+                break;
+
+                case "K":
+                alphIndex = "11";
+                break;
+
+                case "L":
+                alphIndex = "12";
+                break;
+
+                case "M":
+                alphIndex = "13";
+                break;
+
+                case "N":
+                alphIndex = "14";
+                break;
+
+                case "O":
+                alphIndex = "15";
+                break;
+
+                case "P":
+                alphIndex = "16";
+                break;
+
+                case "Q":
+                alphIndex = "17";
+                break;
+
+                case "R":
+                alphIndex = "18";
+                break;
+
+                case "S":
+                alphIndex = "19";
+                break;
+
+                case "T":
+                alphIndex = "20";
+                break;
+
+                case "U":
+                alphIndex = "21";
+                break;
+
+                case "V":
+                alphIndex = "22";
+                break;
+                case "W":
+                alphIndex = "23";
+                break;
+
+                case "X":
+                alphIndex = "24";
+                break;
+
+                case "Y":
+                alphIndex = "25";
+                break;
+
+                case "Z":
+                alphIndex = "26";
+                break;
+            }
+            Random rand = new Random();
+            int rando = rand.Next(0001,999);
+            string newID = rando.ToString()+alphIndex;
+            return int.Parse(newID);
         }
         public static void PrintCatalog(Books[] catalogArray)
         {
@@ -462,6 +800,19 @@ namespace pa5_sdaudet_ua
             }
             Console.ReadKey();
             
+        }
+        static void DisplayLogo()
+        {
+            Console.WriteLine(@"
+           ____  __  __  _____                              _ _       ____              _      __  __                                                   _      _____           _                 
+     /\   |  _ \|  \/  |/ ____|              /\            | (_)     |  _ \            | |    |  \/  |                                                 | |    / ____|         | |                
+    /  \  | |_) | \  / | (___    ______     /  \  _   _  __| |_  ___ | |_) | ___   ___ | | __ | \  / | __ _ _ __   __ _  __ _  ___ _ __ ___   ___ _ __ | |_  | (___  _   _ ___| |_ ___ _ __ ___  
+   / /\ \ |  _ <| |\/| |\___ \  |______|   / /\ \| | | |/ _` | |/ _ \|  _ < / _ \ / _ \| |/ / | |\/| |/ _` | '_ \ / _` |/ _` |/ _ \ '_ ` _ \ / _ \ '_ \| __|  \___ \| | | / __| __/ _ \ '_ ` _ \ 
+  / ____ \| |_) | |  | |____) |           / ____ \ |_| | (_| | | (_) | |_) | (_) | (_) |   <  | |  | | (_| | | | | (_| | (_| |  __/ | | | | |  __/ | | | |_   ____) | |_| \__ \ ||  __/ | | | | |
+ /_/    \_\____/|_|  |_|_____/           /_/    \_\__,_|\__,_|_|\___/|____/ \___/ \___/|_|\_\ |_|  |_|\__,_|_| |_|\__,_|\__, |\___|_| |_| |_|\___|_| |_|\__| |_____/ \__, |___/\__\___|_| |_| |_|
+                                                                                                                         __/ |                                        __/ |                      
+                                                                                                                        |___/                                        |___/                       
+");
         }
     }
 }

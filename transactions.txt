@@ -1,2 +1,6 @@
-2#3333#audet#spencer#20201120#20201220#Returned on 20201126
-3#2222#Grenz, Gil#gil#20201120#20201220#Returned on 20201126
+1#9781400500284#Audet, Spencer#techspence@gmail.com#1458#20201130#20201230#Out
+3#9781906523145#Grenz, Gillian#gillian.grenz@gmail.com#7202#20201130#20201230#Out
+4#9780253211101#Gillian, Grenz#gillian.grenz@gmail.com#7202#20201130#20201230#Out
+5#9780253211101#Jeremy, Ron#ron@gmail.com#79410#20201130#20201230#Out
+6#9780912469096#Audet, Spencer#techspence@gmail.com#1458#20201130#20201230#Returned on 20201130
+7#9780393603033#Audet, Spencer#techspence@gmail.com#1458#20201130#20201230#Returned on 20201130
