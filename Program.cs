@@ -9,10 +9,8 @@ namespace pa5_sdaudet_ua
         {
             Books.InitCount();
             Transaction.InitCount();
-            BookFile workingFile = new BookFile("books.txt");
-            Books[] catalogArray = workingFile.GetBooksFromFile();
-            TransactionFile transLog = new TransactionFile("transactions.txt");
-            Transaction[] transArray = transLog.GetTransactionsFromFile();            
+            Books[] catalogArray = BookFile.GetBooksFromFile();
+            Transaction[] transArray = TransactionFile.GetTransactionsFromFile();            
 
             int exit = 0;
             while (exit == 0)
@@ -39,20 +37,20 @@ namespace pa5_sdaudet_ua
                     case 1:
                     Console.Clear();
                     AddBook(catalogArray);
-                    workingFile.SaveBooksToFile(catalogArray);
+                    BookFile.SaveBooksToFile(catalogArray); //Save file as soon as method is finished. 
                     break;
 
                     case 2:
                     Console.Clear();
                     EditBook(catalogArray);
-                    workingFile.SaveBooksToFile(catalogArray);
+                    BookFile.SaveBooksToFile(catalogArray);//Save file as soon as method is finished.
                     break;
 
                     case 3:
                     Console.Clear();
                     RentBook(catalogArray, transArray);
-                    transLog.SaveToFile(transArray);
-                    workingFile.SaveBooksToFile(catalogArray);
+                    TransactionFile.SaveToFile(transArray);//Save file as soon as method is finished.
+                    BookFile.SaveBooksToFile(catalogArray);//Save file as soon as method is finished.
                     break;
 
                     case 4:
@@ -63,21 +61,15 @@ namespace pa5_sdaudet_ua
                     case 5:
                     Console.Clear();
                     ReturnBook(catalogArray, transArray);
-                    transLog.SaveToFile(transArray);
-                    workingFile.SaveBooksToFile(catalogArray);
-                    break;
-
-                    case 16:
-                    Console.Clear();
-                    PrintCatalog(catalogArray);
-                    Console.WriteLine();
-                    PrintTransactions(transArray);
+                    TransactionFile.SaveToFile(transArray);//Save file as soon as method is finished.
+                    BookFile.SaveBooksToFile(catalogArray);//Save file as soon as method is finished.
                     break;
 
                     case 6:
                     Console.Clear();
                     Console.WriteLine($"BookCount: {Books.GetCount()}");
                     Console.WriteLine($"TransCount: {Transaction.GetTransCount()}");
+                    Console.WriteLine($"Highest customer ID: {Transaction.highestCustID}");
                     Console.ReadKey();
                     break;
 
@@ -108,27 +100,31 @@ namespace pa5_sdaudet_ua
         }
         static void ChooseProgram()
         {
-            //This method displays the main menu and returns the chosen value to the main method for selection.
+            //This method displays the main menu and ASCII Art logo.
             Console.Clear();
             DisplayLogo();
             Console.Write("\n");
             Console.WriteLine("1:   Add a book.");
-            Console.WriteLine("2:   Edit a book.");
+            Console.WriteLine("2:   View/Edit a book.");
             Console.WriteLine("3:   Rent a book.");
-            Console.WriteLine("4:   Return a book.");
-            Console.WriteLine("5:   Exit");
+            Console.WriteLine("4:   Show books available for rental.");
+            Console.WriteLine("5:   View Transaction / Return a book.");
             Console.WriteLine("6:   Show book and transaction counts.");
             Console.WriteLine("7:   Show rentals by month/year.");
             Console.WriteLine("8:   Show rentals by customer email.");
             Console.WriteLine("9:   Show all rentals sorted by customer.");
+            Console.WriteLine("0:   Exit the program.");
         }
-        static void AddBook(Books[] catalogArray)
+        //This method is the user-facing method for adding books. 
+        static void AddBook(Books[] catalogArray) 
         {
             Console.Clear();
             Console.WriteLine("**Add a Book**\n\n\n");
             Console.WriteLine("Please enter an ISBN: ");
             string ISBN = Console.ReadLine();
+            //Search book array for ISBN and return the array subscript. 
             int index = SearchBooks(catalogArray,ISBN);
+            //If the book does not exist, this selection will bring the user through the addition process. 
             if (index==-1 && Books.GetCount() > 0)
             {
                 Books.IncCount();
@@ -140,9 +136,11 @@ namespace pa5_sdaudet_ua
                 string genre = SelectGenre();
                 Console.WriteLine("Please enter the listening time of the book (in minutes): ");
                 int listenTime = int.Parse(Console.ReadLine());
-                catalogArray[Books.GetCount()-1] = new Books(ISBN, title, author, genre, listenTime, 1, 1);
+                //Add an array instance with a new Books object. 
+                catalogArray[Books.GetCount()-1] = new Books(ISBN, title, author, genre, listenTime);
                 Console.WriteLine("Book added to inventory, press any key to continue.");
             }
+            //If the book already exists, just increase the quantities. 
             else
             {
                 catalogArray[index].IncCurrentStock();
@@ -151,9 +149,10 @@ namespace pa5_sdaudet_ua
             }
             Console.ReadKey();
         }
-        static void AddBook(Books[] catalogArray, string ISBN)
+        //This method has a different signature than the other AddBook(), and is only called by EditBook() if the user enters an ISBN that does not exist. (Extra)
+        static void AddBook(Books[] catalogArray, string ISBN) 
         {
-            if (SearchBooks(catalogArray,ISBN) != -1)
+            if (SearchBooks(catalogArray,ISBN) != -1) //Verification that the book does not exist. 
             {
                 Books.IncCount();
                 Console.WriteLine("Please enter the Title of the book: ");
@@ -164,11 +163,11 @@ namespace pa5_sdaudet_ua
                 string genre = SelectGenre();
                 Console.WriteLine("Please enter the listening time of the book (in minutes): ");
                 int listenTime = int.Parse(Console.ReadLine());
-                catalogArray[Books.GetCount()-1] = new Books(ISBN, title, author, genre, listenTime, 1, 1);
+                catalogArray[Books.GetCount()-1] = new Books(ISBN, title, author, genre, listenTime);
                 Console.WriteLine("Book added to inventory, press any key to continue.");
             }
         }
-        public static string SelectGenre()
+        public static string SelectGenre() // This method returns a string for the Genre field so the Genres are standardized across the book library. (Extra)
         {
             bool valid = false;
             Console.WriteLine("1:   Romance");
@@ -180,7 +179,7 @@ namespace pa5_sdaudet_ua
             Console.WriteLine("7:   Inspirational / Religious");
             Console.WriteLine("8:   Biography / Informational");
             Console.WriteLine("9:   Other");
-            while (!valid)
+            while (!valid) //While loop will keep going until a correct value is entered. 
             {
                 switch(Console.ReadLine())
                 {
@@ -215,16 +214,16 @@ namespace pa5_sdaudet_ua
                     break;
                 }
             }
-            return "N/A";
+            return "N/A"; //Catch-all, this line should never be executed (it is impossible).
         }
-        static void EditBook(Books[] catalogArray)
+        static void EditBook(Books[] catalogArray) //EditBooks() Allows users to change fields of a pre-existing ISBN
         {
             Console.Clear();
             Console.WriteLine("**Edit a Book**\n\n\n");
             Console.WriteLine("Please enter an ISBN: ");
             string ISBN = Console.ReadLine();
-            int index = SearchBooks(catalogArray,ISBN);
-            if (index == -1)
+            int index = SearchBooks(catalogArray,ISBN); //Search the library for the entered ISBN
+            if (index == -1) //If the book does not exist, the program offers a shortcut for the user to add it. (Extra)
             {
                 Console.WriteLine("ISBN Does not Exist, would you like to add this ISBN instead? (Y for yes, any other key for no)");
                 string choice = Console.ReadLine();
@@ -235,12 +234,12 @@ namespace pa5_sdaudet_ua
                     Console.ReadKey();
                 }
             }
-            else
+            else //If Book exists, show its current values and provide the ability to change them. 
             {
                 catalogArray[index].EditBook();
             }
         }
-        static void RentBook(Books[] catalogArray, Transaction[] transArray)
+        static void RentBook(Books[] catalogArray, Transaction[] transArray) //RentBook() utilizes both the book array and transaction array. It's function is to allow the user to create a rental record in the system. 
         {
             bool exit = false;
             Console.Clear();
@@ -250,21 +249,21 @@ namespace pa5_sdaudet_ua
                 Console.WriteLine("Please enter an ISBN: ");
                 string ISBN = Console.ReadLine();
                 int index = SearchBooks(catalogArray, ISBN);
-                if (index == -1)
+                if (index == -1) //Check that the ISBN exists
                 {
                     Console.WriteLine("That ISBN does not exist in the system.");
                 }
-                else if (catalogArray[index].GetCurrentStock() < 1)
+                else if (catalogArray[index].GetCurrentStock() < 1) //Ensure there are enough copies available. 
                 {
                     Console.WriteLine("That book is currently out of stock.");
                 }
-                else
+                else //If book exists and there are enough copies of it, user is allowed to proceed. 
                 {
-                    Transaction.IncTransCount();
+                    Transaction.IncTransCount();//Increase total transaction count. 
                     Console.Write("Please enter customer email address: ");
                     string custEmail = Console.ReadLine();
                     int customerFirstTransaction = SearchCustomer(transArray, custEmail);
-                    if (customerFirstTransaction !=-1)
+                    if (customerFirstTransaction !=-1) //If the customer has rented a book before, the system will autofill the other customer data (Name) for the user. (Extra)
                     {
                         string custName = transArray[customerFirstTransaction].GetCustName();
                         Console.WriteLine($"Existing Customer: {custName}");
@@ -272,9 +271,9 @@ namespace pa5_sdaudet_ua
                         Console.WriteLine("How long will this book be rented for (in days): ");
                         int rentalLength = int.Parse(Console.ReadLine());
                         transArray[Transaction.GetTransCount()-1] = new Transaction(ISBN,custName,custEmail,custID,rentalLength);
-                        catalogArray[index].DecCurrentStock();
+                        catalogArray[index].DecCurrentStock();//Reduce Current stock of title by 1 to reflect rental.
                     }
-                    else
+                    else //If it is a new customer, add the rental normally. 
                     {
                         Console.Write("Please enter customer name (Last, First): ");
                         string custName = Console.ReadLine();
@@ -282,11 +281,12 @@ namespace pa5_sdaudet_ua
                         int rentalLength = int.Parse(Console.ReadLine());
                         int custID = GetCustID(transArray,custEmail,custName);
                         transArray[Transaction.GetTransCount()-1] = new Transaction(ISBN,custName,custEmail,custID,rentalLength);
-                        catalogArray[index].DecCurrentStock();
+                        catalogArray[index].DecCurrentStock(); //Reduce Current stock of title by 1 to reflect rental. 
                     }
                 }
                 Console.WriteLine("Rent another book? (Y for yes, any other key for no)");
-                switch(Console.ReadLine().ToUpper())
+                //Allow the user to rent another book without going back to the main menu. 
+                switch(Console.ReadLine().ToUpper()) 
                 {
                     case "Y":
                     exit = false;
@@ -299,32 +299,36 @@ namespace pa5_sdaudet_ua
             }
             
         }
-        static void PrintAvailableBooks(Books[] catalogArray)
+        static void PrintAvailableBooks(Books[] catalogArray) //Uses the console to show an up-to-date list of all available titles. 
         {
             for (int i = 0; i < Books.GetCount();i++)
             {
-                if (catalogArray[i].GetCurrentStock() > 0)
+                if (catalogArray[i].GetCurrentStock() > 0) //If there is at least 1 available copy, print the information in the console. 
                 {
-                    Console.WriteLine($"ISBN: {catalogArray[i].GetISBN()}\nTitle: {catalogArray[i].GetTitle()}\nAuthor: {catalogArray[i].GetAuthor()}\nGenre: {catalogArray[i].GetGenre()}\nListen Time: {catalogArray[i].GetListenTime()}\n\n\n");
+                    Console.WriteLine($"ISBN: {catalogArray[i].GetISBN()}\nTitle: {catalogArray[i].GetTitle()}\nAuthor: {catalogArray[i].GetAuthor()}\nGenre: {catalogArray[i].GetGenre()}\nListen Time: {catalogArray[i].GetListenTime()}\nCurrent Stock: {catalogArray[i].GetCurrentStock()}/{catalogArray[i].GetTotalStock()}\n\n\n");
                 }
             }
+            //Data will be in the console until user presses a key.
+            Console.WriteLine("Press any key to return to the main menu.");
+            Console.ReadKey();
         }
-        static void ReturnBook(Books[] catalogArray, Transaction[] transArray)
+        static void ReturnBook(Books[] catalogArray, Transaction[] transArray) //ReturnBook()'s function is to mark a transaction as returned and to increment the available quantity up by 1 to show it is back in stock. 
         {
             bool skipEntry = false;
             Console.WriteLine("**Rent a Book**\n\n\n");
             Console.Write("Please enter an ISBN: ");
             string ISBN = Console.ReadLine();
             int index = SearchBooks(catalogArray, ISBN);
-            if (index == -1)
+            if (index == -1) //Check that the book exists
             {
                 Console.WriteLine("This ISBN does not exist in the system. Press any key to return to the main menu.");
                 skipEntry = true;
                 Console.ReadKey();
             }
-            if (catalogArray[index].GetTotalStock()-catalogArray[index].GetCurrentStock() == 1)
+            if (catalogArray[index].GetTotalStock()-catalogArray[index].GetCurrentStock() == 1) //Check if there is only 1 copy rented out. If there is only one 'out' copy, the system will automatically pull the transaction record so the user does not have to enter the customer's email address. (Extra)
             {
                 int transIndex =  SearchTransactions(transArray, ISBN);
+                //Print transaction and book information to the console. 
                 Console.WriteLine($"Transaction Information: \n\n");
                 Console.WriteLine($"Customer Name: {transArray[transIndex].GetCustName()}");
                 Console.WriteLine($"Customer Email: {transArray[transIndex].GetCustEmail()}");
@@ -353,17 +357,18 @@ namespace pa5_sdaudet_ua
                 }
                 
             }
-            else if (catalogArray[index].GetTotalStock()-catalogArray[index].GetCurrentStock() == 0)
+            else if (catalogArray[index].GetTotalStock()-catalogArray[index].GetCurrentStock() == 0) //Check that the book does not have its full quantity in stock. 
             {
                 Console.WriteLine("There are no copies of this book rented out. Press any key to return to the main menu.");
                 skipEntry = true;
                 Console.ReadKey();
             }
-            while (!skipEntry)
+            while (!skipEntry) //If there is more than one copy of the ISBN checked out, ask for customer information to match the transaction. 
             {
                 Console.Write("Please enter customer email address: ");
                 string email = Console.ReadLine();
-                int transaction = SearchTransactions(transArray, ISBN, email);
+                int transaction = SearchTransactions(transArray, ISBN, email); //Search for transaction with email specified.
+                //Show transaction and book information. 
                 Console.WriteLine($"Transaction Information: \n\n");
                 Console.WriteLine($"Customer Name: {transArray[transaction].GetCustName()}");
                 Console.WriteLine($"Customer Email: {transArray[transaction].GetCustEmail()}");
@@ -376,7 +381,7 @@ namespace pa5_sdaudet_ua
                 Console.WriteLine($"Genre: {catalogArray[index].GetGenre()}");
                 Console.WriteLine($"Listen Time: {catalogArray[index].GetListenTime()}\n");
                 Console.WriteLine("Would you like to return this rental? (Y for yes, Enter for no.)");
-                string input = Console.ReadLine();
+                string input = Console.ReadLine(); //Allow user to choose whether or not to return the copy. 
                 if (input.ToUpper() == "Y")
                 {
                     catalogArray[index].IncCurrentStock();
@@ -386,37 +391,37 @@ namespace pa5_sdaudet_ua
             }
         }
         
-        static int SearchBooks(Books[] catalogArray,string SearchedISBN)
+        static int SearchBooks(Books[] catalogArray,string SearchedISBN) //Search book array and return the subscript of the array to the calling method. 
         {
             int arrayCount =-1;
             bool itemFound = false;
             //Console.WriteLine($"TitleCount: {Books.GetCount()}");
-            for (int i = 0; i < Books.GetCount();i++)
+            for (int i = 0; i < Books.GetCount();i++) // Counter loop for searching through array. 
             {
-                if (catalogArray[i].GetISBN()==SearchedISBN)
+                if (catalogArray[i].GetISBN()==SearchedISBN) // If this instance's ISBN matched the one entered by the user, return the subscript. 
                 {
                     arrayCount = i;
                     itemFound = true;
-                    break;
+                    break; //Skips the remainder of the search once the item is found for efficiency. 
                 }
                 else {}
             }
             if (!itemFound)
             {
-                arrayCount = -1;
+                arrayCount = -1; //If the book does not exist, the method returns -1 which is handled by the calling method. 
             }
             return arrayCount;
         }
-        static int SearchTransactions(Transaction[] transArray,string SearchedISBN, string custEmail)
+        static int SearchTransactions(Transaction[] transArray,string SearchedISBN, string custEmail) //This signature is for a full transaction lookup. It will return the array subscript of the desired transaction. 
         {
             int arrayCount = -1;
             bool itemFound = false;
             bool emailFound = false;
-            for (int i = 0; i < Transaction.GetTransCount();i++)
+            for (int i = 0; i < Transaction.GetTransCount();i++) //Counter loop for searching the array. 
             {
-                if (transArray[i].GetStatus() == "Out")
+                if (transArray[i].GetStatus() == "Out") //Only search checked-out books. This prevents returning the wrong transaction in case a customer rents the same book 2 separate times. (Extra)
                 {
-                    if (transArray[i].GetCustEmail() == custEmail)
+                    if (transArray[i].GetCustEmail() == custEmail) //Search for user first. 
                     {
                         emailFound = true;
                         if (transArray[i].GetISBN() == SearchedISBN)
@@ -426,26 +431,26 @@ namespace pa5_sdaudet_ua
                     }
                 }
             }
-            if (emailFound && !itemFound)
+            if (emailFound && !itemFound) //Error message in case of ISBN not matching any customer records. 
             {
                 Console.WriteLine("Customer email was found in the transaction log, but it is not associated with the provided ISBN.");
             }
-            else if (!emailFound)
+            else if (!emailFound) //Error message for customer email not existing in the system.
             {
                 Console.WriteLine("Customer email not found in transaction log.");
             }
-            else 
+            else //Unexpected error message. (Made this for debugging)
             {
-                Console.WriteLine("An error occurred in the SearchTransaction method inside the Program class.");
+                Console.WriteLine("An error occurred in Program.SearchTransaction().");
             }
             return arrayCount;
         }
-        static int SearchTransactions(Transaction[] transArray,string SearchedISBN)
-        {
+        static int SearchTransactions(Transaction[] transArray,string SearchedISBN) //This signature is used for searching for a book that only has one copy out. 
+        { //If the user enters an ISBN that only has one copy rented out, this method returns the subscript for that transaction so the calling method can suggest the transaction information. 
             int arrayCount = -1;
             for (int i = 0; i < Transaction.GetTransCount();i++)
             {
-                if (transArray[i].GetStatus() == "Out")
+                if (transArray[i].GetStatus() == "Out") //Only select a transaction that has not been returned yet. 
                 {
                     if ((transArray[i].GetISBN() == SearchedISBN))
                     {
@@ -455,61 +460,54 @@ namespace pa5_sdaudet_ua
             }
             return arrayCount;
         }
-        static int SearchCustomer(Transaction[] transArray,string customerEmail)
-        {
+        static int SearchCustomer(Transaction[] transArray,string customerEmail) //This method returns the first transaction that matches an entered email address. 
+        {// The output from this method is used to autofill customer information when renting a book. (Extra)
             int arrayCount = -1;
             for (int i = 0; i < Transaction.GetTransCount();i++)
             {
-                if (transArray[i].GetStatus() == "Out")
+                if (transArray[i].GetCustEmail() == customerEmail)
                 {
-                    if (transArray[i].GetCustEmail() == customerEmail)
-                    {
-                        return i;
-                    }
+                    return i;
                 }
             }
             return arrayCount;
         }
-        public static void Reporting(Books[] catalogArray, Transaction[] transArray, int reportType)
-        {
+        public static void Reporting(Books[] catalogArray, Transaction[] transArray, int reportType) //Prints various reports to the console or to a file. 
+        { //Comments are not duplicated to file section, only in console section. Save to file sections are only commented with their differences from the console version. 
             if (reportType == 1) //YearMonth Report
             {
-                for (int year = 2000; year <= 2150; year++)
+                for (int year = 2000; year <= 2150; year++) //Search for transactions by year. 
                 {
-                    int yearCount = 0;
-                    int[] monthArray = {0,0,0,0,0,0,0,0,0,0,0,0,0};
-                    string[] monthsOfYear = {"Not a Month", "January","February","March","April","May","June","July","August","September","October","November","December"};
-                    for (int month = 1; month <= 12; month++)
+                    int yearCount = 0; //Count for all rentals on current year of loop. 
+                    int[] monthArray = {0,0,0,0,0,0,0,0,0,0,0,0,0}; //Local Array to hold the month values for whichever year the loop is on. 
+                    string[] monthsOfYear = {"Not a Month", "January","February","March","April","May","June","July","August","September","October","November","December"}; // String array with months of year to print them to console more efficiently. 
+                    for (int month = 1; month <= 12; month++) //Loop for searching by month. 
                     {
-                        for (int i = 0; i < Transaction.GetTransCount();i++)
+                        for (int i = 0; i < Transaction.GetTransCount();i++) //Loop to search array. 
                         {
-                            if (transArray[i].GetRentalDate().Substring(0,4) == year.ToString())
+                            if (transArray[i].GetRentalDate().Substring(0,6) == year.ToString()+month.ToString("D" + 2)/*Puts month integer in format with 2 characters*/) //Compares first 4 characters to match year, and next 2 characters to match month
                             {
-                                if (transArray[i].GetRentalDate().Substring(0,6) == year.ToString()+month.ToString("D" + 2))
-                                {
-                                    yearCount++;
-                                    monthArray[month]++;
-                                }
+                                yearCount++;
+                                monthArray[month]++;
                             }
-                            
                         }
                     }
-                    if (yearCount > 0)
+                    if (yearCount > 0) //If there were transactions on the current year of the loop, print them in the console. Otherwise do nothing, which will prevent endless console scrolling. 
                     {
-                        Console.WriteLine($"{year} Total Rentals: {yearCount}");
+                        Console.WriteLine($"{year} Total Rentals: {yearCount}");//Show total year rentals. 
                         for (int month = 1; month <= 12; month++)
                         {
-                            if (monthArray[month] > 0)
+                            if (monthArray[month] > 0) //Only print months that had rentals. 
                             {
-                                Console.WriteLine($"{monthsOfYear[month]} {year} Rentals: {monthArray[month]}");
+                                Console.WriteLine($"{monthsOfYear[month]} {year} Rentals: {monthArray[month]}"); //Show month of year total. 
                             }
                         }
                     }
                     
                 }
-                Console.Write("\n\nWould you like to save this report to a file? (Y for yes, any other key for no.) ");
+                Console.Write("\n\nWould you like to save this report to a file? (Y for yes, Enter to return to Main Menu.) ");
                 string printDesired = Console.ReadLine();
-                if (printDesired.ToUpper() == "Y")
+                if (printDesired.ToUpper() == "Y") //This section is identical to the above section besides the change from Console.WriteLine() to outFile.WriteLine()
                 {
                     Console.Write("Please enter the name of the file you would like the report saved to (Do not include a file extension.): ");
                     string fileName = Console.ReadLine()+".txt";
@@ -546,29 +544,26 @@ namespace pa5_sdaudet_ua
                             }
                         }
                     }
-                    outFile.Close();
+                    outFile.Close(); //Close and release lock on file. 
                 }
                 
             }
-            else if (reportType == 2)
+            else if (reportType == 2) //Show all transactions associated with specified email address. 
             {
                 Console.Write("Please enter a customer email address: ");
                 string email = Console.ReadLine();
-                int custTransaction = SearchCustomer(transArray, email);
-                Console.WriteLine($"Showing all transactions for {transArray[custTransaction].GetCustName()} ({email}).\n");
-                for (int i = 0; i < Transaction.GetTransCount(); i++)
+                int custTransaction = SearchCustomer(transArray, email); //Find a transaction with that email address and return its subscript. 
+                Console.WriteLine($"Showing all transactions for {transArray[custTransaction].GetCustName()} ({email}).\n"); //Show customer name from the above transaction before printing the transactions. 
+                for (int i = 0; i < Transaction.GetTransCount(); i++) //Counter for array search
                 {
-                    if (transArray[i].GetCustEmail() == email)
+                    if (transArray[i].GetCustEmail() == email) //If this instance's custEmail field matches the specified email address, print its information. 
                     {
-                        string bookISBN = transArray[i].GetISBN();
-                        int index = SearchBooks(catalogArray, bookISBN);
-
                         Console.WriteLine($"{transArray[i].GetISBN()}\tRental Date: {transArray[i].GetRentalDate()}\tStatus: {transArray[i].GetStatus()}");
                     }
                 }
-                Console.Write("\n\nWould you like to save this report to a file? (Y for yes, any other key for no.) ");
+                Console.Write("\n\nWould you like to save this report to a file? (Y for yes, Enter to return to Main Menu.) ");
                 string printDesired = Console.ReadLine();
-                if (printDesired.ToUpper() == "Y")
+                if (printDesired.ToUpper() == "Y") //This section is identical to the above section besides the change from Console.WriteLine() to outFile.WriteLine()
                 {
                     Console.Write("Please enter the name of the file you would like the report saved to (Do not include a file extension.): ");
                     string fileName = Console.ReadLine()+".txt";
@@ -578,74 +573,67 @@ namespace pa5_sdaudet_ua
                     {
                         if (transArray[i].GetCustEmail() == email)
                         {
-                            string bookISBN = transArray[i].GetISBN();
-                            int index = SearchBooks(catalogArray, bookISBN);
-
                             outFile.WriteLine($"{transArray[i].GetISBN()}\tRental Date: {transArray[i].GetRentalDate()}\tStatus: {transArray[i].GetStatus()}");
                         }
                     }
-                    outFile.Close();
+                    outFile.Close(); //Close and release lock on file.
                 }
             }
             else if (reportType == 3)
             {
-                for (int customer = 0; customer < Transaction.highestCustID; customer++)
+                for (int customer = 0; customer <= Transaction.highestCustID; customer++) //Counter for customerID. It will count up from 0 to the highest customerID, which will display the information sorted alphabetically by last name. 
                 {
                     int customerTotal = 0;
                     string customerName = null;
                     bool customerFound = false;
-                    for (int i = 0; i < Transaction.GetTransCount();i++)
+                    for (int i = 0; i < Transaction.GetTransCount();i++)//Search for first transaction matching customerID to retrieve name of customer. 
                     {
                         if (transArray[i].custID == customer)
                         {
                             customerFound = true;
                             customerName = transArray[i].GetCustName();
-                            break;
+                            break; //End for loop early once a matching transaction has been found (Improves efficiency)
                         }
                     }
-                    if (customerFound)
+                    if (customerFound) //If the customer ID exists, print the customer name and their transactions. 
                     {
                         Console.WriteLine($"{customerName}");
-                    }
-                    for (int i = 0; i < Transaction.GetTransCount();i++)
-                    {
-                        if (transArray[i].custID == customer)
+                        for (int i = 0; i < Transaction.GetTransCount();i++) //Transactions are stored chonologically, so after sorting by last name, transactions will be printed in chronological order. 
                         {
-                            customerTotal++;
-                            Console.WriteLine($"{transArray[i].GetISBN()}\tRental Date: {transArray[i].GetRentalDate()}\tStatus: {transArray[i].GetStatus()}");
+                            if (transArray[i].custID == customer)
+                            {
+                                customerTotal++;
+                                Console.WriteLine($"{transArray[i].GetISBN()}\tRental Date: {transArray[i].GetRentalDate()}\tStatus: {transArray[i].GetStatus()}");
+                            }
                         }
-                    }
-                    if (customerTotal > 0)
-                    {
-                        Console.WriteLine($"{customerName} has ordered {customerTotal} books total.\n\n");
+                        Console.WriteLine($"Customer Total: {customerTotal}\n\n"); //Print customer total transactions. 
                     }
                 }
-                Console.Write("Would you like to save this report to a file? (Y for yes, any other key for no.) ");
+                Console.Write("Would you like to save this report to a file? (Y for yes, Enter to return to Main Menu.) ");
                 string printDesired = Console.ReadLine();
-                if (printDesired.ToUpper() == "Y")
+                if (printDesired.ToUpper() == "Y") //
                 {
                     Console.Write("Please enter the name of the file you would like the report saved to (Do not include a file extension.): ");
                     string fileName = Console.ReadLine()+".txt";
                     StreamWriter outFile = new StreamWriter(fileName);
-                    for (int customer = 0; customer < 9999; customer++)
+                    for (int customer = 0; customer <= Transaction.highestCustID; customer++)
                     {
                         int customerTotal = 0;
                         string customerName = null;
                         bool customerFound = false;
-                        for (int i = 0; i < Transaction.GetTransCount();i++)
+                        for (int i = 0; i < Transaction.GetTransCount();i++)//Search for first transaction matching customerID to retrieve name of customer. 
+                    {
+                        if (transArray[i].custID == customer)
                         {
-                            if (transArray[i].custID == customer)
-                            {
-                                customerFound = true;
-                                customerName = transArray[i].GetCustName();
-                                break;
-                            }
+                            customerFound = true;
+                            customerName = transArray[i].GetCustName();
+                            break; //End for loop early once a matching transaction has been found (Improves efficiency)
                         }
-                        if (customerFound)
-                        {
-                            outFile.WriteLine($"{customerName}");
-                        }
-                        for (int i = 0; i < Transaction.GetTransCount();i++)
+                    }
+                    if (customerFound) //If the customer ID exists, print the customer name and their transactions. 
+                    {
+                        outFile.WriteLine($"{customerName}");
+                        for (int i = 0; i < Transaction.GetTransCount();i++) //Transactions are stored chonologically, so after sorting by last name, transactions will be printed in chronological order. 
                         {
                             if (transArray[i].custID == customer)
                             {
@@ -653,12 +641,10 @@ namespace pa5_sdaudet_ua
                                 outFile.WriteLine($"{transArray[i].GetISBN()}\tRental Date: {transArray[i].GetRentalDate()}\tStatus: {transArray[i].GetStatus()}");
                             }
                         }
-                        if (customerTotal > 0)
-                        {
-                            outFile.WriteLine($"{customerName} has ordered {customerTotal} books total.\n\n");
-                        }
+                        outFile.WriteLine($"Customer Total: {customerTotal}\n\n"); //Print customer total transactions. 
                     }
-                    outFile.Close();
+                    }
+                    outFile.Close(); //Close and release lock on file.
                 }
             }
         }
@@ -667,13 +653,14 @@ namespace pa5_sdaudet_ua
             string alphIndex = null;
             for (int i = 0; i < Transaction.GetTransCount()-1;i++)
             {
-                if (transArray[i].GetCustEmail() == custEmail)
+                if (transArray[i].GetCustEmail() == custEmail) //Check if customer already exists, if so return the existing customerID
                 {
                     return transArray[i].custID;
                 }
             }
-            switch (custName.Substring(0,1).ToUpper())
-            {
+            //If customer does not already exists, this switch will assign the first number of the customerID based on the first letter of the customer last name.
+            switch (custName.Substring(0,1).ToUpper()) 
+            {  
                 case "A":
                 alphIndex = "1";
                 break;
@@ -777,32 +764,15 @@ namespace pa5_sdaudet_ua
                 alphIndex = "26";
                 break;
             }
-            Random rand = new Random();
-            int rando = rand.Next(0001,999);
-            string newID = rando.ToString()+alphIndex;
-            return int.Parse(newID);
-        }
-        public static void PrintCatalog(Books[] catalogArray)
-        {
-            Console.WriteLine($"ISBN\tTitle\tAuthor\tGenre\tListen Time\tTotal / Current Stock\t");
-            for (int i =0; i < Books.GetCount();i++)
-            {
-                Console.WriteLine($"{catalogArray[i].GetISBN()}\t{catalogArray[i].GetTitle()}\t{catalogArray[i].GetAuthor()}\t{catalogArray[i].GetGenre()}\t{catalogArray[i].GetListenTime()}\t{catalogArray[i].GetTotalStock()}/{catalogArray[i].GetCurrentStock()}");
-            }
-            Console.ReadKey();
-            
-        }
-        public static void PrintTransactions(Transaction[] transArray)
-        {
-            for (int i =0; i < Transaction.GetTransCount();i++)
-            {
-                Console.WriteLine(transArray[i].GetID() + transArray[i].GetISBN() + transArray[i].GetCustName());
-            }
-            Console.ReadKey();
-            
+            Random rand = new Random(); //Random number generator
+            int rando = rand.Next(0001,999); //Random number generator maxValue 999
+            string newID = rando.ToString()+alphIndex; //Append the random number to the alphabet prefix value
+            return int.Parse(newID); //Return the new customer ID. 
         }
         static void DisplayLogo()
         {
+            //This ASCII art was computer generated using http://patorjk.com/software/taag/
+
             Console.WriteLine(@"
            ____  __  __  _____                              _ _       ____              _      __  __                                                   _      _____           _                 
      /\   |  _ \|  \/  |/ ____|              /\            | (_)     |  _ \            | |    |  \/  |                                                 | |    / ____|         | |                
